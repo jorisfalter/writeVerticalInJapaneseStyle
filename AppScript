@@ -1,0 +1,30 @@
+/**
+ * Distributes text from a specific cell across columns in a style inspired by vertical Japanese text layout, with text right-aligned in each cell.
+ * The script places each word in the next cell downwards, starting from a specified right-most column, and then continues at the top in the next column to the left after reaching the bottom of the 'page'.
+ */
+function writeInJapaneseStyle() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var text = sheet.getRange("A1").getValue(); // Assumes text is in cell A1. Adjust as necessary.
+  var words = text.split(/\s+/); // Splits the cell text into individual words.
+
+  var startingColumn = 4; // Start from column Z. Adjust this to your starting column.
+  var rowsPerPage = 30; // Approximate rows per 'A4 page'. Adjust based on your formatting.
+  var currentPage = 0;
+  var currentRow = 1;
+
+  for (var i = 0; i < words.length; i++) {
+    if (currentRow > rowsPerPage) {
+      // If end of 'page' is reached, reset row counter and move to the next column to the left.
+      currentRow = 1;
+      currentPage++;
+    }
+    
+    var columnOffset = currentPage;
+    var targetColumn = startingColumn - columnOffset; // Move leftwards for each new 'page'.
+    var cell = sheet.getRange(currentRow, targetColumn);
+    cell.setValue(words[i]);
+    cell.setHorizontalAlignment('right'); // Right-align the text in the cell.
+    
+    currentRow++; // Move to the next row.
+  }
+}
